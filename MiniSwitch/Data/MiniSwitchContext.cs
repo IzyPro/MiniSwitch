@@ -12,5 +12,12 @@ namespace MiniSwitch.Data
         }
 
         public new DbSet<User> Users { get; set; }
+        public DbSet<Channel> Channels { get; set; }
+        public DbSet<Fee> Fees { get; set; }
+        public DbSet<Route> Routes { get; set; }
+        public DbSet<Scheme> Schemes { get; set; }
+        public DbSet<SinkNode> SinkNodes { get; set; }
+        public DbSet<SourceNode> SourceNodes { get; set; }
+        public DbSet<TransactionType> TransactionTypes { get; set; }
     }
 }

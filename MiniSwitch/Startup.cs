@@ -19,6 +19,13 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
+using MiniSwitch.Services.SourceNodeServices;
+using MiniSwitch.Services.SinkNodeServices;
+using MiniSwitch.Services.TransactionTypeServices;
+using MiniSwitch.Services.ChannelServices;
+using MiniSwitch.Services.FeeServices;
+using MiniSwitch.Services.RouteServices;
+using MiniSwitch.Services.SchemeServices;
 
 namespace MiniSwitch
 {
@@ -113,11 +120,16 @@ namespace MiniSwitch
 			});
 
 
-			//services.AddScoped<IAdminServices, AdminServices>();
 			services.AddScoped<IMailServices, MailServices>();
 			services.AddScoped<IMailTemplateServices, MailTemplateServices>();
 			services.AddScoped<IUserServices, UserServices>();
-			//services.AddScoped<IWithdrawalServices, WithdrawalServices>();
+            services.AddScoped<ISourceNodeService, SourceNodeService>();
+			services.AddScoped<ISinkNodeService, SinkNodeService>();
+			services.AddScoped<ITransactionTypeService, TransactionTypeService>();
+			services.AddScoped<IChannelService, ChannelService>();
+			services.AddScoped<IFeeService, FeeService>();
+			services.AddScoped<IRouteService, RouteService>();
+			services.AddScoped<ISchemeService, SchemeService>();
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

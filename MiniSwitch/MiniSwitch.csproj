@@ -28,7 +28,6 @@
   <ItemGroup>
     <Folder Include="Data\">
     </Folder>
-    <Folder Include="Views\Admins\" />
     <Folder Include="ViewModels\">
     </Folder>
     <Folder Include="DTOs\">
@@ -38,6 +37,24 @@
     <Folder Include="Views\Auth\">
     </Folder>
     <Folder Include="Views\User\">
+    </Folder>
+    <Folder Include="Views\SourceNode\">
+    </Folder>
+    <Folder Include="Views\SinkNode\">
+    </Folder>
+    <Folder Include="Services\SourceNodeServices\">
+    </Folder>
+    <Folder Include="Services\SinkNodeServices\">
+    </Folder>
+    <Folder Include="Services\TransactionTypeServices\">
+    </Folder>
+    <Folder Include="Services\ChannelServices\">
+    </Folder>
+    <Folder Include="Services\FeeServices\">
+    </Folder>
+    <Folder Include="Services\RouteServices\">
+    </Folder>
+    <Folder Include="Services\SchemeServices\">
     </Folder>
   </ItemGroup>
 </Project>

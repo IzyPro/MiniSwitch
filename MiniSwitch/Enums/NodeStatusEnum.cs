@@ -5,10 +5,9 @@ using System.Threading.Tasks;
 
 namespace MiniSwitch.Enums
 {
-	public enum WithdrawalEnum
+	public enum NodeStatusEnum
 	{
-		Pending = 1,
-		Approved,
-		Rejected
+		Active = 1,
+		InActive,
 	}
 }
