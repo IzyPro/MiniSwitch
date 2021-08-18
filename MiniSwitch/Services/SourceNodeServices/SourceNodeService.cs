@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using MiniSwitch.Data;
 using MiniSwitch.Helpers;
 using MiniSwitch.Models;
+using MiniSwitch.ViewModels;
 
 namespace MiniSwitch.Services.SourceNodeServices
 {
@@ -18,9 +19,18 @@ namespace MiniSwitch.Services.SourceNodeServices
             _context = context;
         }
 
-        public async Task<ResponseManager> Create(SourceNode sourceNode)
+        public async Task<ResponseManager> Create(SourceNodeViewModel sourceNode)
         {
-            if (!IPAddressValidation.IsIPAddress(sourceNode.IpAddress))
+            var scheme = await _context.Schemes.Where(x => x.Id == sourceNode.SchemeID).FirstOrDefaultAsync();
+            if (scheme == null)
+            {
+                return new ResponseManager
+                {
+                    isSuccess = false,
+                    Message = "Select a scheme"
+                };
+            }
+            else if (!IPAddressValidation.IsIPAddress(sourceNode.IpAddress))
             {
                 return new ResponseManager
                 {
@@ -44,7 +54,7 @@ namespace MiniSwitch.Services.SourceNodeServices
                 HostName = sourceNode.HostName,
                 IpAddress = sourceNode.IpAddress,
                 Port = sourceNode.Port,
-                Scheme = sourceNode.Scheme,
+                Scheme = scheme,
                 Status = sourceNode.Status
             };
 
@@ -68,17 +78,18 @@ namespace MiniSwitch.Services.SourceNodeServices
             }
         }
 
-        public async Task<ResponseManager> Edit(SourceNode sourceNode)
+        public async Task<ResponseManager> Edit(SourceNodeViewModel sourceNode)
         {
-            var node = _context.SourceNodes.Where(x => x.Id == sourceNode.Id).FirstOrDefault();
-            if (node == null)
+            var scheme = await _context.Schemes.Where(x => x.Id == sourceNode.SchemeID).FirstOrDefaultAsync();
+            if (scheme == null)
+            {
                 return new ResponseManager
                 {
                     isSuccess = false,
-                    Message = $"No Source node with Id {sourceNode.Id} found"
+                    Message = "Select a scheme"
                 };
-
-            if (!IPAddressValidation.IsIPAddress(sourceNode.IpAddress))
+            }
+            else if (!IPAddressValidation.IsIPAddress(sourceNode.IpAddress))
             {
                 return new ResponseManager
                 {
@@ -94,8 +105,20 @@ namespace MiniSwitch.Services.SourceNodeServices
                     Message = "Select a valid status"
                 };
             }
+            var node = _context.SourceNodes.Where(x => x.Id == sourceNode.Id).FirstOrDefault();
+            if (node == null)
+                return new ResponseManager
+                {
+                    isSuccess = false,
+                    Message = $"No Source node with Id {sourceNode.Id} found"
+                };
+            node.Scheme = scheme;
+            node.Name = sourceNode.Name;
+            node.HostName = sourceNode.HostName;
+            node.IpAddress = sourceNode.IpAddress;
+            node.Port = sourceNode.Port;
+            node.Status = sourceNode.Status;
 
-            node = sourceNode;
             _context.SourceNodes.Update(node);
             var result = await _context.SaveChangesAsync();
             if(result > 0)
@@ -124,17 +147,12 @@ namespace MiniSwitch.Services.SourceNodeServices
                 pageNumber = 1;
 
                 var result = _context.SourceNodes
-                    .Where(s =>
-                        s.Name.Contains(searchString) ||
-                        s.IpAddress.Contains(searchString) ||
-                        s.Port.Contains(searchString) ||
-                        s.Status.ToString().Contains(searchString) ||
-                        s.Id.ToString().Contains(searchString))
+                    .Include(s => s.Scheme)
+                    .Where(s => s.Name.Contains(searchString) || s.Scheme.Name.Contains(searchString) || s.IpAddress.Contains(searchString) || s.Port.Contains(searchString) || s.HostName.Contains(searchString))
                     .AsNoTracking();
                 return await PaginatedList<SourceNode>.CreateAsync(result, pageNumber ?? 1, pageSize);
             }
-            return await PaginatedList<SourceNode>.CreateAsync(_context.SourceNodes.AsNoTracking(), pageNumber ?? 1, pageSize);
-            //return await _context.SourceNodes.ToListAsync();
+            return await PaginatedList<SourceNode>.CreateAsync(_context.SourceNodes.Include(s => s.Scheme).AsNoTracking(), pageNumber ?? 1, pageSize);
         }
     }
 }
