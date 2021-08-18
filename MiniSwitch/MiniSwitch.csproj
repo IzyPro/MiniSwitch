@@ -64,6 +64,8 @@
     </Folder>
     <Folder Include="Views\Route\">
     </Folder>
+    <Folder Include="Views\Scheme\">
+    </Folder>
   </ItemGroup>
   <ItemGroup>
     <Compile Update="Migrations\20210816145141_Second-Migration.Designer.cs">
@@ -71,6 +73,9 @@
     </Compile>
     <Compile Update="Migrations\20210816153549_Third-Migration.Designer.cs">
       <DependentUpon>20210816153549_Third-Migration.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Migrations\20210818123339_Fifth-Migration.Designer.cs">
+      <DependentUpon>20210818123339_Fifth-Migration.cs</DependentUpon>
     </Compile>
   </ItemGroup>
 </Project>
