@@ -9,6 +9,6 @@ namespace MiniSwitch.Services.FeeServices
     {
         Task<ResponseManager> Create(Fee model);
         Task<ResponseManager> Edit(Fee model);
-        Task<List<Fee>> FetchAll();
+        Task<List<Fee>> FetchAll(string searchString = "", int? pageNumber = 1);
     }
 }

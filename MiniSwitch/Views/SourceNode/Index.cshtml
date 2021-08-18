@@ -1,25 +1,110 @@
-﻿@{
+﻿@model MiniSwitch.ViewModels.SourceNodeViewModel
+@*@model SourceNode*@
+@{
     ViewData["Title"] = "Source Node Management";
     Layout = "~/Views/Shared/_MasterLayout.cshtml";
+    List<Scheme> schemes = Model.Scheme;
+    PaginatedList<SourceNode> nodes = Model.SourceNodes;
 }
 
 <link rel="stylesheet" href="~/css/user.css" />
 
 <div class="container">
-    <h2 class="text-center heading mb-5">Dashboard</h2>
-    <div class="row">
-        <div class="col-md-8 shadow p-3 rounded">
-            <h4>Wallets</h4>
+    <p class="text-center text-success">@TempData["Success"]</p>
+    <p class="text-center text-danger">@TempData["Error"]</p>
 
-        </div>
-        <div class="col-md-4">
-            <div class="shadow p-3 mb-3 rounded">
-                <h4>Balance</h4>
-                <h1>$500</h1>
+    <button class="mt-3 btn-sm col-md-3" type="button" data-toggle="modal" data-target="#modal">Add New Source Node</button>
+    <form asp-action="Index" method="get">
+        <div class="form-actions no-color col-md-12 mt-5">
+            <div class="row">
+                <p>Search:</p>
+                <input type="text" class="form-control col-md-3 m-1" name="SearchString" value="@ViewData["CurrentFilter"]" />
+                <button type="submit" class="btn-sm col-md-2 m-1">Search</button>
+                <hr />
+                <a asp-action="Index" class="m-1">Back to Full List</a>
             </div>
-            <div class="shadow p-3 rounded">
-                <h6>MiniSwitch Status</h6>
-                <h4>Active</h4>
+        </div>
+    </form>
+    <table id="meetingTable" class="table table-striped table-hover table-sm table-bordered">
+        <thead class="">
+            <tr>
+                <th class="col-md-2">Id</th>
+                <th class="col-md-2">Name</th>
+                <th class="col-md-5">Host Name</th>
+                <th class="col-md-2">IP Address</th>
+                <th class="col-md-2">Port</th>
+            </tr>
+        </thead>
+        <tbody>
+            @{
+                if (nodes != null)
+                {
+                    if (nodes.Count > 0)
+                    {
+                        foreach (var node in nodes)
+                        {
+                            <tr>
+                                <td class="col-md-2">@string.Join("", node.Id.ToString().Take(10))...</td>
+                                <td class="col-md-5">@node.Name</td>
+                                <td class="col-md-3">@node.HostName</td>
+                                <td class="col-md-2">@node.IpAddress</td>
+                                <td class="col-md-2">@node.Port</td>
+                            </tr>
+                        }
+                        <div class="">
+                            @if (Model.SourceNodes.HasPreviousPage)
+                            {
+                                <button class="text-left mr-5 btn-sm" asp-action="Index" asp-route-pageNumber="@(Model.SourceNodes.PageIndex - 1)">Previous</button>
+                            }
+                            @if (Model.SourceNodes.HasNextPage)
+                            {
+                                <button class="text-right ml-5 btn-sm" asp-action="Index" asp-route-pageNumber="@(Model.SourceNodes.PageIndex + 1)">Next</button>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <p class="text-center">No source node added. Add a source node</p>
+                    }
+                }
+            }
+        </tbody>
+    </table>
+
+
+    <div id="modal" class="modal">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-body m-3">
+                    <h3 class="text-center mb-3">Source Node</h3>
+                    <form method="post" asp-action="Create" asp-controller="SourceNode">
+                        <div class="row">
+                            <input class="form-control m-2 col-md-5" name="Name" type="text" placeholder="Name" required />
+                            <input class="form-control m-2 col-md-5" name="HostName" type="text" placeholder="Host Name" required />
+                            <input class="form-control m-2 col-md-5" name="IpAddress" type="text" placeholder="IP Address" required />
+                            <input class="form-control m-2 col-md-5" name="Scheme" type="text" placeholder="Scheme" required />
+                            <select name="Scheme" class="form-control m-2" required>
+                                <option value="">Select a Scheme</option>
+                                @foreach (var scheme in schemes)
+                                {
+                                    <option class="m-1" value="@scheme" asp-for="Status">@scheme.Name</option>
+                                }
+                            </select>
+
+                            <input class="form-control m-2 col-md-5" name="Port" type="text" placeholder="Port" required />
+                            <div class="">
+                                <select name="Status" class="form-control m-2" required>
+                                    <option value="">Select Node Status</option>
+                                    @foreach (var status in System.Enum.GetValues(typeof(MiniSwitch.Enums.NodeStatusEnum)))
+                                    {
+                                        <option class="m-1" value="@status" asp-for="Status">@status</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <button class="mt-3 btn-sm" type="submit">Submit</button>
+                    </form>
+                </div>
             </div>
         </div>
     </div>

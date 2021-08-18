@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using MiniSwitch.Data;
+using MiniSwitch.Helpers;
 using MiniSwitch.Models;
 
 namespace MiniSwitch.Services.SourceNodeServices
@@ -19,6 +20,23 @@ namespace MiniSwitch.Services.SourceNodeServices
 
         public async Task<ResponseManager> Create(SourceNode sourceNode)
         {
+            if (!IPAddressValidation.IsIPAddress(sourceNode.IpAddress))
+            {
+                return new ResponseManager
+                {
+                    isSuccess = false,
+                    Message = "Enter a valid IP Address"
+                };
+            }
+            else if ((int)sourceNode.Status < 1)
+            {
+                return new ResponseManager
+                {
+                    isSuccess = false,
+                    Message = "Select a valid status"
+                };
+            }
+
             var node = new SourceNode
             {
                 Id = Guid.NewGuid(),
@@ -27,6 +45,7 @@ namespace MiniSwitch.Services.SourceNodeServices
                 IpAddress = sourceNode.IpAddress,
                 Port = sourceNode.Port,
                 Scheme = sourceNode.Scheme,
+                Status = sourceNode.Status
             };
 
             await _context.SourceNodes.AddAsync(node);
@@ -58,6 +77,24 @@ namespace MiniSwitch.Services.SourceNodeServices
                     isSuccess = false,
                     Message = $"No Source node with Id {sourceNode.Id} found"
                 };
+
+            if (!IPAddressValidation.IsIPAddress(sourceNode.IpAddress))
+            {
+                return new ResponseManager
+                {
+                    isSuccess = false,
+                    Message = "Enter a valid IP Address"
+                };
+            }
+            else if ((int)sourceNode.Status < 1)
+            {
+                return new ResponseManager
+                {
+                    isSuccess = false,
+                    Message = "Select a valid status"
+                };
+            }
+
             node = sourceNode;
             _context.SourceNodes.Update(node);
             var result = await _context.SaveChangesAsync();
@@ -79,9 +116,25 @@ namespace MiniSwitch.Services.SourceNodeServices
             }
         }
 
-        public async Task<List<SourceNode>> FetchAll()
+        public async Task<PaginatedList<SourceNode>> FetchAll(string searchString = "", int? pageNumber = 1)
         {
-            return await _context.SourceNodes.ToListAsync();
+            int pageSize = 15;
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                pageNumber = 1;
+
+                var result = _context.SourceNodes
+                    .Where(s =>
+                        s.Name.Contains(searchString) ||
+                        s.IpAddress.Contains(searchString) ||
+                        s.Port.Contains(searchString) ||
+                        s.Status.ToString().Contains(searchString) ||
+                        s.Id.ToString().Contains(searchString))
+                    .AsNoTracking();
+                return await PaginatedList<SourceNode>.CreateAsync(result, pageNumber ?? 1, pageSize);
+            }
+            return await PaginatedList<SourceNode>.CreateAsync(_context.SourceNodes.AsNoTracking(), pageNumber ?? 1, pageSize);
+            //return await _context.SourceNodes.ToListAsync();
         }
     }
 }

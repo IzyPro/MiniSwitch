@@ -9,6 +9,6 @@ namespace MiniSwitch.Services.SinkNodeServices
     {
         Task<ResponseManager> Create(SinkNode sourceNode);
         Task<ResponseManager> Edit(SinkNode sourceNode);
-        Task<List<SinkNode>> FetchAll();
+        Task<PaginatedList<SinkNode>> FetchAll(string searchString = "", int? pageNumber = 1);
     }
 }

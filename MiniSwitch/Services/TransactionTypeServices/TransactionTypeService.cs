@@ -57,7 +57,10 @@ namespace MiniSwitch.Services.TransactionTypeServices
                     isSuccess = false,
                     Message = $"No sink node with Id {model.Id} found"
                 };
-            transactionType = model;
+            transactionType.Name = model.Name;
+            transactionType.Code = model.Code;
+            transactionType.Description = model.Description;
+
             _context.TransactionTypes.Update(transactionType);
             var result = await _context.SaveChangesAsync();
             if (result > 0)
@@ -78,9 +81,19 @@ namespace MiniSwitch.Services.TransactionTypeServices
             }
         }
 
-        public async Task<List<TransactionType>> FetchAll()
+        public async Task<List<TransactionType>> FetchAll(string searchString = "", int? pageNumber = 1)
         {
-            return await _context.TransactionTypes.ToListAsync();
+            int pageSize = 15;
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                pageNumber = 1;
+
+                var result = _context.TransactionTypes
+                    .Where(s => s.Name.Contains(searchString) || s.Code.Contains(searchString) || s.Description.Contains(searchString))
+                    .AsNoTracking();
+                return await PaginatedList<TransactionType>.CreateAsync(result, pageNumber ?? 1, pageSize);
+            }
+            return await PaginatedList<TransactionType>.CreateAsync(_context.TransactionTypes.AsNoTracking(), pageNumber ?? 1, pageSize);
         }
     }
 }

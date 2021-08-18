@@ -21,10 +21,11 @@ namespace MiniSwitch.Controllers
 
 
         [HttpGet]
-        public IActionResult Index()
+        public async Task<IActionResult> Index(string searchString = "", int? pageNumber = 1)
         {
-            var sourceNodes = _channelService.FetchAll();
-            return View(sourceNodes);
+            ViewData["CurrentFilter"] = searchString;
+            var channels = await _channelService.FetchAll(searchString, pageNumber);
+            return View(channels);
         }
 
         [HttpPost]
@@ -32,9 +33,9 @@ namespace MiniSwitch.Controllers
         {
             var response = await _channelService.Edit(model);
             if (response.isSuccess)
-                ViewBag.Success = response.Message;
+                TempData["Success"] = response.Message;
             else
-                ViewBag.Error = response.Message;
+                TempData["Error"] = response.Message;
             return RedirectToAction("Index");
         }
 
@@ -43,9 +44,9 @@ namespace MiniSwitch.Controllers
         {
             var response = await _channelService.Create(model);
             if (response.isSuccess)
-                ViewBag.Success = response.Message;
+                TempData["Success"] = response.Message;
             else
-                ViewBag.Error = response.Message;
+                TempData["Error"] = response.Message;
             return RedirectToAction("Index");
         }
     }

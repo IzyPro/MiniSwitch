@@ -14,7 +14,7 @@ namespace MiniSwitch.Models
         [Required]
         public string HostName { get; set; }
         [Required]
-        public IPAddress IpAddress { get; set; }
+        public string IpAddress { get; set; }
         [Required]
         public string Port { get; set; }
         [Required]

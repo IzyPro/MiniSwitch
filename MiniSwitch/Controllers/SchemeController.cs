@@ -22,8 +22,8 @@ namespace MiniSwitch.Controllers
         [HttpGet]
         public IActionResult Index()
         {
-            var sourceNodes = _schemeService.FetchAll();
-            return View(sourceNodes);
+            var schemes = _schemeService.FetchAll();
+            return View(schemes);
         }
 
         [HttpPost]
@@ -31,9 +31,9 @@ namespace MiniSwitch.Controllers
         {
             var response = await _schemeService.Edit(model);
             if (response.isSuccess)
-                ViewBag.Success = response.Message;
+                TempData["Success"] = response.Message;
             else
-                ViewBag.Error = response.Message;
+                TempData["Error"] = response.Message;
             return RedirectToAction("Index");
         }
 
@@ -42,9 +42,9 @@ namespace MiniSwitch.Controllers
         {
             var response = await _schemeService.Create(model);
             if (response.isSuccess)
-                ViewBag.Success = response.Message;
+                TempData["Success"] = response.Message;
             else
-                ViewBag.Error = response.Message;
+                TempData["Error"] = response.Message;
             return RedirectToAction("Index");
         }
     }

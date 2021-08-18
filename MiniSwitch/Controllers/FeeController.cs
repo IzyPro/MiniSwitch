@@ -20,10 +20,11 @@ namespace MiniSwitch.Controllers
         }
 
         [HttpGet]
-        public IActionResult Index()
+        public async Task<IActionResult> Index(string searchString = "", int? pageNumber = 1)
         {
-            var sourceNodes = _feeService.FetchAll();
-            return View(sourceNodes);
+            ViewData["CurrentFilter"] = searchString;
+            var fees = await _feeService.FetchAll(searchString, pageNumber);
+            return View(fees);
         }
 
         [HttpPost]
@@ -31,9 +32,9 @@ namespace MiniSwitch.Controllers
         {
             var response = await _feeService.Edit(model);
             if (response.isSuccess)
-                ViewBag.Success = response.Message;
+                TempData["Success"] = response.Message;
             else
-                ViewBag.Error = response.Message;
+                TempData["Error"] = response.Message;
             return RedirectToAction("Index");
         }
 
@@ -42,9 +43,9 @@ namespace MiniSwitch.Controllers
         {
             var response = await _feeService.Create(model);
             if (response.isSuccess)
-                ViewBag.Success = response.Message;
+                TempData["Success"] = response.Message;
             else
-                ViewBag.Error = response.Message;
+                TempData["Error"] = response.Message;
             return RedirectToAction("Index");
         }
     }

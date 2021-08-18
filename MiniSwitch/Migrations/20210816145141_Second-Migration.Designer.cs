@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MiniSwitch.Data;
 
 namespace MiniSwitch.Migrations
 {
     [DbContext(typeof(MiniSwitchContext))]
-    partial class MiniSwitchContextModelSnapshot : ModelSnapshot
+    [Migration("20210816145141_Second-Migration")]
+    partial class SecondMigration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -184,9 +186,6 @@ namespace MiniSwitch.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<decimal>("Amount")
-                        .HasColumnType("decimal(18,4)");
-
                     b.Property<int>("FeeType")
                         .HasColumnType("int");
 
@@ -246,10 +245,6 @@ namespace MiniSwitch.Migrations
 
                     b.Property<Guid?>("FeeId")
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid?>("RouteId")
                         .HasColumnType("uniqueidentifier");

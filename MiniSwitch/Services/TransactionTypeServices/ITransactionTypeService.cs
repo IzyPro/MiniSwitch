@@ -7,8 +7,8 @@ namespace MiniSwitch.Services.TransactionTypeServices
 {
     public interface ITransactionTypeService
     {
-        Task<ResponseManager> Create(TransactionType sourceNode);
-        Task<ResponseManager> Edit(TransactionType sourceNode);
-        Task<List<TransactionType>> FetchAll();
+        Task<ResponseManager> Create(TransactionType model);
+        Task<ResponseManager> Edit(TransactionType model);
+        Task<List<TransactionType>> FetchAll(string searchString = "", int? pageNumber = 1);
     }
 }

@@ -8,6 +8,6 @@ namespace MiniSwitch.Enums
 	public enum NodeStatusEnum
 	{
 		Active = 1,
-		InActive,
+		Deactivated,
 	}
 }
