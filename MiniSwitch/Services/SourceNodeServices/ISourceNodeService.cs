@@ -9,6 +9,6 @@ namespace MiniSwitch.Services.SourceNodeServices
     {
         Task<ResponseManager> Create(SourceNode sourceNode);
         Task<ResponseManager> Edit(SourceNode sourceNode);
-        Task<List<SourceNode>> FetchAll();
+        Task<PaginatedList<SourceNode>> FetchAll(string searchString, int? pageNumber);
     }
 }

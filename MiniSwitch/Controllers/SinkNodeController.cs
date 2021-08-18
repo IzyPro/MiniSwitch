@@ -20,31 +20,33 @@ namespace MiniSwitch.Controllers
         }
 
         [HttpGet]
-        public IActionResult Index()
+        public async Task<IActionResult> Index(string searchString = "", int? pageNumber = 1)
         {
-            var sourceNodes = _sinkNodeService.FetchAll();
-            return View(sourceNodes);
+            ViewData["CurrentFilter"] = searchString;
+            var sinkNodes = await _sinkNodeService.FetchAll(searchString, pageNumber);
+
+            return View(sinkNodes);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Edit([FromForm] SinkNode sourceNode)
+        public async Task<IActionResult> Edit([FromForm] SinkNode node)
         {
-            var response = await _sinkNodeService.Edit(sourceNode);
+            var response = await _sinkNodeService.Edit(node);
             if (response.isSuccess)
-                ViewBag.Success = response.Message;
+                TempData["Success"] = response.Message;
             else
-                ViewBag.Error = response.Message;
+                TempData["Error"] = response.Message;
             return RedirectToAction("Index");
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromForm] SinkNode sourceNode)
+        public async Task<IActionResult> Create([FromForm] SinkNode node)
         {
-            var response = await _sinkNodeService.Create(sourceNode);
+            var response = await _sinkNodeService.Create(node);
             if (response.isSuccess)
-                ViewBag.Success = response.Message;
+                TempData["Success"] = response.Message;
             else
-                ViewBag.Error = response.Message;
+                TempData["Error"] = response.Message;
             return RedirectToAction("Index");
         }
     }

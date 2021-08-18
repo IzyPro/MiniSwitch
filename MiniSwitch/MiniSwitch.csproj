@@ -56,5 +56,21 @@
     </Folder>
     <Folder Include="Services\SchemeServices\">
     </Folder>
+    <Folder Include="Views\TransactionType\">
+    </Folder>
+    <Folder Include="Views\Channel\">
+    </Folder>
+    <Folder Include="Views\Fee\">
+    </Folder>
+    <Folder Include="Views\Route\">
+    </Folder>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Update="Migrations\20210816145141_Second-Migration.Designer.cs">
+      <DependentUpon>20210816145141_Second-Migration.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Migrations\20210816153549_Third-Migration.Designer.cs">
+      <DependentUpon>20210816153549_Third-Migration.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
 </Project>

@@ -9,6 +9,6 @@ namespace MiniSwitch.Services.ChannelServices
     {
         Task<ResponseManager> Create(Channel model);
         Task<ResponseManager> Edit(Channel model);
-        Task<List<Channel>> FetchAll();
+        Task<List<Channel>> FetchAll(string searchString = "", int? pageNumber = 1);
     }
 }

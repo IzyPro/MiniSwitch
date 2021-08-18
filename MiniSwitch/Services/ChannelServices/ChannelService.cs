@@ -57,7 +57,11 @@ namespace MiniSwitch.Services.ChannelServices
                     isSuccess = false,
                     Message = $"No sink node with Id {model.Id} found"
                 };
-            channel = model;
+
+            channel.Name = model.Name;
+            channel.Code = model.Code;
+            channel.Description = model.Description;
+
             _context.Channels.Update(channel);
             var result = await _context.SaveChangesAsync();
             if (result > 0)
@@ -78,9 +82,19 @@ namespace MiniSwitch.Services.ChannelServices
             }
         }
 
-        public async Task<List<Channel>> FetchAll()
+        public async Task<List<Channel>> FetchAll(string searchString = "", int? pageNumber = 1)
         {
-            return await _context.Channels.ToListAsync();
+            int pageSize = 15;
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                pageNumber = 1;
+
+                var result = _context.Channels
+                    .Where(s => s.Name.Contains(searchString) || s.Code.Contains(searchString) || s.Description.Contains(searchString))
+                    .AsNoTracking();
+                return await PaginatedList<Channel>.CreateAsync(result, pageNumber ?? 1, pageSize);
+            }
+            return await PaginatedList<Channel>.CreateAsync(_context.Channels.AsNoTracking(), pageNumber ?? 1, pageSize);
         }
     }
 }

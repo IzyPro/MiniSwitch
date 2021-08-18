@@ -31,9 +31,9 @@ namespace MiniSwitch.Controllers
         {
             var response = await _routeService.Edit(model);
             if (response.isSuccess)
-                ViewBag.Success = response.Message;
+                TempData["Success"] = response.Message;
             else
-                ViewBag.Error = response.Message;
+                TempData["Error"] = response.Message;
             return RedirectToAction("Index");
         }
 
@@ -42,9 +42,9 @@ namespace MiniSwitch.Controllers
         {
             var response = await _routeService.Create(model);
             if (response.isSuccess)
-                ViewBag.Success = response.Message;
+                TempData["Success"] = response.Message;
             else
-                ViewBag.Error = response.Message;
+                TempData["Error"] = response.Message;
             return RedirectToAction("Index");
         }
     }

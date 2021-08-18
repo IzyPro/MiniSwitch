@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using MiniSwitch.Data;
+using MiniSwitch.Helpers;
 using MiniSwitch.Models;
 
 namespace MiniSwitch.Services.SinkNodeServices
@@ -19,6 +20,23 @@ namespace MiniSwitch.Services.SinkNodeServices
 
         public async Task<ResponseManager> Create(SinkNode sinkNode)
         {
+            if (!IPAddressValidation.IsIPAddress(sinkNode.IpAddress))
+            {
+                return new ResponseManager
+                {
+                    isSuccess = false,
+                    Message = "Enter a valid IP Address"
+                };
+            }
+            else if((int)sinkNode.Status < 1)
+            {
+                return new ResponseManager
+                {
+                    isSuccess = false,
+                    Message = "Select a valid status"
+                };
+            }
+
             var node = new SinkNode
             {
                 Id = Guid.NewGuid(),
@@ -26,6 +44,7 @@ namespace MiniSwitch.Services.SinkNodeServices
                 HostName = sinkNode.HostName,
                 IpAddress = sinkNode.IpAddress,
                 Port = sinkNode.Port,
+                Status = sinkNode.Status
             };
 
             await _context.SinkNodes.AddAsync(node);
@@ -57,7 +76,30 @@ namespace MiniSwitch.Services.SinkNodeServices
                     isSuccess = false,
                     Message = $"No sink node with Id {sinkNode.Id} found"
                 };
-            node = sinkNode;
+
+            if (!IPAddressValidation.IsIPAddress(sinkNode.IpAddress))
+            {
+                return new ResponseManager
+                {
+                    isSuccess = false,
+                    Message = "Enter a valid IP Address"
+                };
+            }
+            else if ((int)sinkNode.Status < 1)
+            {
+                return new ResponseManager
+                {
+                    isSuccess = false,
+                    Message = "Select a valid status"
+                };
+            }
+
+            node.HostName = sinkNode.HostName;
+            node.IpAddress = sinkNode.IpAddress;
+            node.Name = sinkNode.Name;
+            node.Port = sinkNode.Port;
+            node.Status = sinkNode.Status;
+
             _context.SinkNodes.Update(node);
             var result = await _context.SaveChangesAsync();
             if (result > 0)
@@ -78,9 +120,19 @@ namespace MiniSwitch.Services.SinkNodeServices
             }
         }
 
-        public async Task<List<SinkNode>> FetchAll()
+        public async Task<PaginatedList<SinkNode>> FetchAll(string searchString = "", int? pageNumber = 1)
         {
-            return await _context.SinkNodes.ToListAsync();
+            int pageSize = 15;
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                pageNumber = 1;
+
+                var result = _context.SinkNodes
+                    .Where(s => s.Name.Contains(searchString) || s.HostName.Contains(searchString) || s.Port.Contains(searchString))
+                    .AsNoTracking();
+                return await PaginatedList<SinkNode>.CreateAsync(result, pageNumber ?? 1, pageSize);
+            }
+            return await PaginatedList<SinkNode>.CreateAsync(_context.SinkNodes.AsNoTracking(), pageNumber ?? 1, pageSize);
         }
     }
 }
