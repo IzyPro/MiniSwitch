@@ -158,7 +158,7 @@ namespace MiniSwitch.Controllers
 
         public IActionResult Logout()
         {
-            //Clear Sessions here
+            HttpContext.Session.Clear();
             return RedirectToAction("Login");
         }
     }
