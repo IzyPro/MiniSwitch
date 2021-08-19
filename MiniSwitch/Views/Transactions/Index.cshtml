@@ -1,0 +1,125 @@
+﻿@model PaginatedList<Transaction>
+@{
+    ViewData["Title"] = "Transactions Management";
+    Layout = "~/Views/Shared/_MasterLayout.cshtml";
+    List<Scheme> schemes = ViewBag.Schemes;
+    List<SourceNode> sourceNodes = ViewBag.SourceNodes;
+    var currency = System.Globalization.CultureInfo.CreateSpecificCulture("en-NG");
+}
+<link rel="stylesheet" href="~/css/user.css" />
+
+<div class="container">
+    <p class="text-center text-success">@TempData["Success"]</p>
+    <p class="text-center text-danger">@TempData["Error"]</p>
+
+    <button class="mt-3 btn-sm col-md-3" type="button" data-toggle="modal" data-target="#modal">Create New Transaction</button>
+    <form asp-action="Index" method="get">
+        <div class="form-actions no-color col-md-12 mt-5">
+            <div class="row">
+                <p>Search:</p>
+                <input type="text" class="form-control col-md-3 m-1" name="SearchString" value="@ViewData["CurrentFilter"]" />
+                <button type="submit" class="btn-sm col-md-2 m-1">Search</button>
+                <hr />
+                <a asp-action="Index" class="m-1">Back to Full List</a>
+            </div>
+        </div>
+    </form>
+    <table id="meetingTable" class="table table-striped table-hover table-sm table-bordered">
+        <thead class="">
+            <tr>
+                <th class="col-md-2">Id</th>
+                <th class="col-md-4">Source</th>
+                <th class="col-md-3">Destination</th>
+                <th class="col-md-3">Amount</th>
+                <th class="col-md-3">Transaction Type</th>
+                <th class="col-md-3">Channel</th>
+                <th class="col-md-3">Fee</th>
+                <th class="col-md-3">Total Amount</th>
+            </tr>
+        </thead>
+        <tbody>
+            @{
+                if (Model != null)
+                {
+                    if (Model.Count > 0)
+                    {
+                        foreach (var transactions in Model)
+                        {
+                            <tr>
+                                <td class="col-md-2">@string.Join("", transactions.Id.ToString().Take(10))...</td>
+                                <td class="col-md-4">@transactions.SourceNode.Name</td>
+                                <td class="col-md-3">@transactions.SourceNode.Scheme.Route.SinkNode.Name</td>
+                                <td class="col-md-3">@transactions.Amount.ToString("C", currency)</td>
+                                <td class="col-md-3">@transactions.SourceNode.Scheme.TransactionType.Name</td>
+                                <td class="col-md-3">@transactions.SourceNode.Scheme.Channel.Name</td>
+                                <td class="col-md-3">@transactions.Fee.ToString("C", currency)</td>
+                                <td class="col-md-3">@transactions.TotalAmount.ToString("C", currency)</td>
+                                @*<td class="col-md-2"><button class="btn-sm" id="@transactions.Id.ToString()" type="button" data-toggle="modal" data-target="#editModal" onclick="GetEditNode(event)">Edit</button></td>*@
+                            </tr>
+                        }
+
+                        <div class="">
+                            @if (Model.HasPreviousPage)
+                            {
+                                <button class="text-left mr-5 btn-sm" asp-action="Index" asp-route-pageNumber="@(Model.PageIndex - 1)">Previous</button>
+                            }
+                            @if (Model.HasNextPage)
+                            {
+                                <button class="text-right ml-5 btn-sm" asp-action="Index" asp-route-pageNumber="@(Model.PageIndex + 1)">Next</button>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <p class="text-center">No Transactions done yet. Initiate a transaction</p>
+                    }
+                }
+            }
+        </tbody>
+    </table>
+
+
+    <div id="modal" class="modal">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-body m-3">
+                    <h3 class="text-center mb-3">Transaction</h3>
+                    <form method="post" asp-action="Create" asp-controller="Transactions">
+                        <div class="row">
+                            <input class="form-control m-2 col-md-5" name="Amount" type="text" placeholder="Amount" required />
+                            <div class="">
+                                <select name="SourceNodeID" class="form-control m-2" required>
+                                    <option value="">Select Source Node</option>
+                                    @foreach (var node in sourceNodes)
+                                    {
+                                        <option class="m-1" value="@node.Id">@node.Name</option>
+                                    }
+                                </select>
+                            </div>
+                            @*<div class="m-1">
+                                <select name="SchemeID" class="form-control m-2" required>
+                                    <option value="">Select Scheme</option>
+                                    @foreach (var scheme in schemes)
+                                    {
+                                        <option class="m-1" value="@scheme.Id">@scheme.Name</option>
+                                    }
+                                </select>
+                            </div>*@
+                        </div>
+                        <button class="mt-3 btn-sm" type="submit">Submit</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+</div>
+
+<script>function GetEditNode(event) {
+        var target = event.target || event.srcElement;
+
+        document.getElementById("editId").value = target.id;
+    }</script>

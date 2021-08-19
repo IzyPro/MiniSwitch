@@ -2,6 +2,7 @@
 @{
     ViewData["Title"] = "Fee Management";
     Layout = "~/Views/Shared/_MasterLayout.cshtml";
+    var currency = System.Globalization.CultureInfo.CreateSpecificCulture("en-NG");
 }
 <link rel="stylesheet" href="~/css/user.css" />
 
@@ -29,6 +30,7 @@
                 <th class="col-md-3">Fee Type</th>
                 <th class="col-md-3">Maximum</th>
                 <th class="col-md-3">Minimum</th>
+                <th class="col-md-3">Percentage</th>
                 <th class="col-md-3">Amount</th>
             </tr>
         </thead>
@@ -40,15 +42,16 @@
                     {
                         foreach (var fee in Model)
                         {
-                        <tr>
-                            @*<td class="col-md-2">@string.Join("", fee.Id.ToString().Take(10))...</td>*@
-                            <td class="col-md-4">@fee.Name</td>
-                            <td class="col-md-3">@fee.FeeType</td>
-                            <td class="col-md-3">@fee.Maximum</td>
-                            <td class="col-md-3">@fee.Minimum</td>
-                            <td class="col-md-3">@fee.Amount</td>
-                            <td class="col-md-2"><button class="btn-sm" id="@fee.Id.ToString()" type="button" data-toggle="modal" data-target="#editModal" onclick="GetEditNode(event)">Edit</button></td>
-                        </tr>
+                            <tr>
+                                @*<td class="col-md-2">@string.Join("", fee.Id.ToString().Take(10))...</td>*@
+                                <td class="col-md-4">@fee.Name</td>
+                                <td class="col-md-3">@fee.FeeType</td>
+                                <td class="col-md-3">@fee.Maximum.ToString("C", currency)</td>
+                                <td class="col-md-3">@fee.Minimum.ToString("C", currency)</td>
+                                <td class="col-md-3">@fee.Percentage.ToString("0.00")</td>
+                                <td class="col-md-3">@fee.Amount.ToString("C", currency)</td>
+                                <td class="col-md-2"><button class="btn-sm" id="@fee.Id.ToString()" type="button" data-toggle="modal" data-target="#editModal" onclick="GetEditNode(event)">Edit</button></td>
+                            </tr>
                         }
 
                         <div class="">
@@ -91,6 +94,7 @@
                             </div>
                             <input id="Maximum" class="form-control m-2 col-md-5" name="Maximum" type="text" placeholder="Maximum" style="display: none;" />
                             <input id="Minimum" class="form-control m-2 col-md-5" name="Minimum" type="text" placeholder="Minimum" style="display: none;" />
+                            <input id="Percentage" class="form-control m-2 col-md-5" name="Percentage" type="text" placeholder="Percentage" style="display: none;" />
                             <input id="Amount" class="form-control m-2 col-md-5" name="Amount" type="text" placeholder="Amount" style="display: none;" />
                         </div>
                         <button class="mt-3 btn-sm" type="submit">Submit</button>
@@ -121,9 +125,10 @@
                                     }
                                 </select>
                             </div>
-                            <input id="editMaximum" class="form-control m-2 col-md-5" name="Maximum" type="text" placeholder="Maximum" style="display: none;"/>
-                            <input id="editMinimum" class="form-control m-2 col-md-5" name="Minimum" type="text" placeholder="Minimum" style="display: none;"/>
-                            <input id="editAmount" class="form-control m-2 col-md-5" name="Amount" type="text" placeholder="Amount" style="display: none;"/>
+                            <input id="editMaximum" class="form-control m-2 col-md-5" name="Maximum" type="text" placeholder="Maximum" style="display: none;" />
+                            <input id="editMinimum" class="form-control m-2 col-md-5" name="Minimum" type="text" placeholder="Minimum" style="display: none;" />
+                            <input id="editPercentage" class="form-control m-2 col-md-5" name="Percentage" type="text" placeholder="Percentage" style="display: none;" />
+                            <input id="editAmount" class="form-control m-2 col-md-5" name="Amount" type="text" placeholder="Amount" style="display: none;" />
 
                         </div>
                         <button class="mt-3 btn-sm" type="submit">Submit</button>
@@ -140,11 +145,13 @@
             document.getElementById("Amount").style.display = "block";
             document.getElementById("Maximum").style.display = "none";
             document.getElementById("Minimum").style.display = "none";
+            document.getElementById("Percentage").style.display = "none";
         }
         else {
             document.getElementById("Amount").style.display = "none";
             document.getElementById("Maximum").style.display = "block";
             document.getElementById("Minimum").style.display = "block";
+            document.getElementById("Percentage").style.display = "block";
         }
     }
 
@@ -154,11 +161,13 @@
             document.getElementById("editAmount").style.display = "block";
             document.getElementById("editMaximum").style.display = "none";
             document.getElementById("editMinimum").style.display = "none";
+            document.getElementById("editPercentage").style.display = "none";
         }
         else {
             document.getElementById("editAmount").style.display = "none";
             document.getElementById("editMaximum").style.display = "block";
             document.getElementById("editMinimum").style.display = "block";
+            document.getElementById("editPercentage").style.display = "block";
         }
     }
 

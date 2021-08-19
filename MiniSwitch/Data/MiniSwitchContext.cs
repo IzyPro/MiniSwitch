@@ -19,5 +19,6 @@ namespace MiniSwitch.Data
         public DbSet<SinkNode> SinkNodes { get; set; }
         public DbSet<SourceNode> SourceNodes { get; set; }
         public DbSet<TransactionType> TransactionTypes { get; set; }
+        public DbSet<Transaction> Transactions { get; set; }
     }
 }

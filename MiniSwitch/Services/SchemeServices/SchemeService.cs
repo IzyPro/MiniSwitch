@@ -25,6 +25,31 @@ namespace MiniSwitch.Services.SchemeServices
             var route = await _context.Routes.Where(x => x.Id == model.RouteID).FirstOrDefaultAsync();
             var fee = await _context.Fees.Where(x => x.Id == model.FeeID).FirstOrDefaultAsync();
 
+            if (transactionType == null)
+                return new ResponseManager
+                {
+                    isSuccess = false,
+                    Message = "Select a valid transaction type"
+                };
+            else if (channel == null)
+                return new ResponseManager
+                {
+                    isSuccess = false,
+                    Message = "Select a valid channel"
+                };
+            else if (route == null)
+                return new ResponseManager
+                {
+                    isSuccess = false,
+                    Message = "Select a valid route"
+                };
+            else if (fee == null)
+                return new ResponseManager
+                {
+                    isSuccess = false,
+                    Message = "Select a valid fee"
+                };
+
             var scheme = new Scheme
             {
                 Id = Guid.NewGuid(),

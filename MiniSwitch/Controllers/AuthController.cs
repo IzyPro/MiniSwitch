@@ -67,7 +67,7 @@ namespace MiniSwitch.Controllers
                     var loginResponse = _mapper.Map<LoginResponseDTO>(user);
                     loginResponse.UserRoles = await _userService.GetUserRolesAsync(user);
                     loginResponse.token = token;
-                    return RedirectToAction("Dashboard", "User");
+                    return RedirectToAction("Dashboard", "User", user);
                 }
             }
             else

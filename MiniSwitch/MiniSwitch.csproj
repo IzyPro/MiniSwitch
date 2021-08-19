@@ -66,6 +66,10 @@
     </Folder>
     <Folder Include="Views\Scheme\">
     </Folder>
+    <Folder Include="Views\Transactions\">
+    </Folder>
+    <Folder Include="Services\TransactionsServices\">
+    </Folder>
   </ItemGroup>
   <ItemGroup>
     <Compile Update="Migrations\20210816145141_Second-Migration.Designer.cs">

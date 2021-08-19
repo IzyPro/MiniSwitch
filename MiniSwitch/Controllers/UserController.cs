@@ -1,12 +1,18 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using AutoMapper;
-using MiniSwitch.DTOs;
-using MiniSwitch.Services;
-using MiniSwitch.ViewModels;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using MiniSwitch.DTOs;
+using MiniSwitch.Models;
+using MiniSwitch.Services;
+using MiniSwitch.Services.TransactionsServices;
+using MiniSwitch.ViewModels;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -16,16 +22,28 @@ namespace MiniSwitch.Controllers
     {
         private IUserServices _userService;
         private IMapper _mapper;
-        public UserController(IUserServices userService, IMapper mapper)
+        private ITransactionService _transactionService;
+        private UserManager<User> _userManager;
+        private static User user;
+
+        public UserController(IUserServices userService, IMapper mapper, ITransactionService transactionService, UserManager<User> userManager)
         {
             _userService = userService;
             _mapper = mapper;
+            _transactionService = transactionService;
+            _userManager = userManager;
         }
 
         [HttpGet]
-        public IActionResult Dashboard()
+        public async Task<IActionResult> Dashboard(User newuser)
         {
-            return View();
+            if(!string.IsNullOrEmpty(newuser.Firstname))
+            {
+                user = newuser;
+            }
+            var totaltransactionAmount = await _transactionService.FetchAll();
+            ViewBag.TotalTransactionAmount = totaltransactionAmount.Sum(a => a.Amount);
+            return View(user);
         }
 
 

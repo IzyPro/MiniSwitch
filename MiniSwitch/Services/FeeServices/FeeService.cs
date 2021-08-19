@@ -29,12 +29,12 @@ namespace MiniSwitch.Services.FeeServices
                     Message = "Flat Fees must have a valid amount"
                 };
             }
-            else if(model.FeeType == FeeTypeEnum.Percentage && (model.Maximum <= 0m || model.Minimum <= 0m))
+            else if(model.FeeType == FeeTypeEnum.Percentage && (model.Maximum <= 0m || model.Minimum <= 0m || model.Percentage < 0))
             {
                 return new ResponseManager
                 {
                     isSuccess = false,
-                    Message = "Flat Fees must have a valid amount"
+                    Message = "Percentage Fees must have valid percentage, maximum & minimum value"
                 };
             }
 
@@ -45,7 +45,8 @@ namespace MiniSwitch.Services.FeeServices
                 FeeType = model.FeeType,
                 Maximum = model.Maximum,
                 Minimum = model.Minimum,
-                Amount = model.Amount
+                Amount = model.Amount,
+                Percentage = model.Percentage,
             };
 
             await _context.Fees.AddAsync(fee);
@@ -78,12 +79,12 @@ namespace MiniSwitch.Services.FeeServices
                     Message = "Flat Fees must have a valid amount"
                 };
             }
-            else if (model.FeeType == FeeTypeEnum.Percentage && (model.Maximum <= 0m || model.Minimum <= 0m))
+            else if (model.FeeType == FeeTypeEnum.Percentage && (model.Maximum <= 0m || model.Minimum <= 0m || model.Percentage < 0))
             {
                 return new ResponseManager
                 {
                     isSuccess = false,
-                    Message = "Flat Fees must have a valid amount"
+                    Message = "Percentage Fees must have valid percentage, maximum & minimum value"
                 };
             }
 
@@ -100,6 +101,7 @@ namespace MiniSwitch.Services.FeeServices
             fee.Maximum = model.Maximum;
             fee.Minimum = model.Minimum;
             fee.Amount = model.Amount;
+            fee.Percentage = model.Percentage;
 
             _context.Fees.Update(fee);
             var result = await _context.SaveChangesAsync();
@@ -129,7 +131,7 @@ namespace MiniSwitch.Services.FeeServices
                 pageNumber = 1;
 
                 var result = _context.Fees
-                    .Where(s => s.Name.Contains(searchString) || s.Maximum.ToString().Contains(searchString) || s.Minimum.ToString().Contains(searchString))
+                    .Where(s => s.Name.Contains(searchString) || s.Maximum.ToString().Contains(searchString) || s.Minimum.ToString().Contains(searchString) || s.Percentage.ToString().Contains(searchString))
                     .AsNoTracking();
                 return await PaginatedList<Fee>.CreateAsync(result, pageNumber ?? 1, pageSize);
             }

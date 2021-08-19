@@ -26,6 +26,7 @@ using MiniSwitch.Services.ChannelServices;
 using MiniSwitch.Services.FeeServices;
 using MiniSwitch.Services.RouteServices;
 using MiniSwitch.Services.SchemeServices;
+using MiniSwitch.Services.TransactionsServices;
 
 namespace MiniSwitch
 {
@@ -61,13 +62,6 @@ namespace MiniSwitch
 			}).AddEntityFrameworkStores<MiniSwitchContext>()
 					.AddDefaultTokenProviders();
 			services.AddHttpContextAccessor();
-
-			services.AddHangfire(config =>
-			config.SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
-				.UseSimpleAssemblyNameTypeSerializer()
-				.UseDefaultTypeSerializer()
-				.UseMemoryStorage());
-			services.AddHangfireServer();
 
 
 			//CORS
@@ -130,6 +124,7 @@ namespace MiniSwitch
 			services.AddScoped<IFeeService, FeeService>();
 			services.AddScoped<IRouteService, RouteService>();
 			services.AddScoped<ISchemeService, SchemeService>();
+			services.AddScoped<ITransactionService, TransactionService>();
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -149,7 +144,6 @@ namespace MiniSwitch
 			}
 			app.UseHttpsRedirection();
 			app.UseStaticFiles();
-			app.UseHangfireDashboard();
 
 			app.UseRouting();
 
