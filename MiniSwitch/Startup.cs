@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Hangfire;
-using Hangfire.MemoryStorage;
 using MiniSwitch.Data;
 using MiniSwitch.Helpers;
 using MiniSwitch.Models;
@@ -12,7 +11,6 @@ using MiniSwitch.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -27,6 +25,7 @@ using MiniSwitch.Services.FeeServices;
 using MiniSwitch.Services.RouteServices;
 using MiniSwitch.Services.SchemeServices;
 using MiniSwitch.Services.TransactionsServices;
+using Microsoft.AspNetCore.Http;
 
 namespace MiniSwitch
 {
@@ -81,6 +80,10 @@ namespace MiniSwitch
 			services.Configure<JwtModel>(Configuration.GetSection("JwtSettings"));
 			var jwtSettings = Configuration.GetSection("JwtSettings").Get<JwtModel>();
 
+
+			services.AddSession(options => {
+				options.IdleTimeout = TimeSpan.FromMinutes(60);
+			});
 
 			//AUTHENTICATION
 			services.AddAuthentication(x =>
@@ -144,9 +147,22 @@ namespace MiniSwitch
 			}
 			app.UseHttpsRedirection();
 			app.UseStaticFiles();
+			//app.UseCookiePolicy();
 
 			app.UseRouting();
 
+			app.UseSession();
+
+			//Add JWToken to all incoming HTTP Request Header
+			app.Use(async (context, next) =>
+			{
+				var JWToken = context.Session.GetString("JWToken");
+				if (!string.IsNullOrEmpty(JWToken))
+				{
+					context.Request.Headers.Add("Authorization", "Bearer " + JWToken);
+				}
+				await next();
+			});
 			app.UseAuthentication();
 			app.UseAuthorization();
 
