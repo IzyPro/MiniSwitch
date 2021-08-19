@@ -25,24 +25,17 @@ namespace MiniSwitch.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Index(string searchString, int? pageNumber)
+        public async Task<IActionResult> Index(string searchString = "", int? pageNumber = 1)
         {
             ViewData["CurrentFilter"] = searchString;
             var sourceNodes = await _sourceNodeService.FetchAll(searchString, pageNumber);
-            var scheme = await _schemeService.FetchAll();
-            //if (sourceNodes.Status != TaskStatus.Faulted)
-            //    return View();
-            var result = new SourceNodeViewModel
-            {
-                SourceNodes = sourceNodes,
-                Scheme = scheme
-            };
-            //ViewBag.Result = sourceNodes.Result;
-            return View(result);
+            ViewBag.Schemes = await _schemeService.FetchAll();
+
+            return View(sourceNodes);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Edit([FromForm] SourceNode sourceNode)
+        public async Task<IActionResult> Edit([FromForm] SourceNodeViewModel sourceNode)
         {
             var response = await _sourceNodeService.Edit(sourceNode);
             if (response.isSuccess)
@@ -53,7 +46,7 @@ namespace MiniSwitch.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromForm] SourceNode sourceNode)
+        public async Task<IActionResult> Create([FromForm] SourceNodeViewModel sourceNode)
         {
             var response = await _sourceNodeService.Create(sourceNode);
             if (response.isSuccess)

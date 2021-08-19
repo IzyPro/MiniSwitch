@@ -24,13 +24,19 @@ namespace MiniSwitch.Services.RouteServices
             var sinknode = await _context.SinkNodes.Where(x => x.Id == model.SinkNodeID).FirstOrDefaultAsync();
 
             if (sinknode == null)
-            {
                 return new ResponseManager
                 {
                     isSuccess = false,
                     Message = "Select a sink node"
                 };
-            }
+
+            else if(model.BIN.Length != 6)
+                return new ResponseManager
+                {
+                    isSuccess = false,
+                    Message = "Enter a valid BIN"
+                };
+
             var route = new Route
             {
                 Id = Guid.NewGuid(),

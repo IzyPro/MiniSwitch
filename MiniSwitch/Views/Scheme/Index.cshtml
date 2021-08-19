@@ -1,0 +1,194 @@
+﻿@model PaginatedList<Scheme>
+@{
+    ViewData["Title"] = "Scheme Management";
+    Layout = "~/Views/Shared/_MasterLayout.cshtml";
+    List<Route> routes = ViewBag.Routes;
+    List<TransactionType> transactionTypes = ViewBag.TransactionTypes;
+    List<Channel> channels = ViewBag.Channels;
+    List<Fee> fees = ViewBag.Fees;
+}
+<link rel="stylesheet" href="~/css/user.css" />
+
+<div class="container">
+    <p class="text-center text-success">@TempData["Success"]</p>
+    <p class="text-center text-danger">@TempData["Error"]</p>
+
+    <button class="mt-3 btn-sm col-md-3" type="button" data-toggle="modal" data-target="#modal">Add New Scheme</button>
+    <form asp-action="Index" method="get">
+        <div class="form-actions no-color col-md-12 mt-5">
+            <div class="row">
+                <p>Search:</p>
+                <input type="text" class="form-control col-md-3 m-1" name="SearchString" value="@ViewData["CurrentFilter"]" />
+                <button type="submit" class="btn-sm col-md-2 m-1">Search</button>
+                <hr />
+                <a asp-action="Index" class="m-1">Back to Full List</a>
+            </div>
+        </div>
+    </form>
+    <table id="meetingTable" class="table table-striped table-hover table-sm table-bordered">
+        <thead class="">
+            <tr>
+                <th class="col-md-4">Name</th>
+                <th class="col-md-3">Description</th>
+                <th class="col-md-3">Route</th>
+                <th class="col-md-3">Transaction Type</th>
+                <th class="col-md-3">Channel</th>
+                <th class="col-md-3">Fee</th>
+            </tr>
+        </thead>
+        <tbody>
+            @{
+                if (Model != null)
+                {
+                    if (Model.Count > 0)
+                    {
+                        foreach (var scheme in Model)
+                        {
+                            <tr>
+                                <td class="col-md-4">@scheme.Name</td>
+                                <td class="col-md-3">@scheme.Description</td>
+                                <td class="col-md-3">@scheme.Route.Name</td>
+                                <td class="col-md-3">@scheme.TransactionType.Name</td>
+                                <td class="col-md-3">@scheme.Channel.Name</td>
+                                <td class="col-md-3">@scheme.Fee.Name</td>
+                                <td class="col-md-2"><button class="btn-sm" id="@scheme.Id.ToString()" type="button" data-toggle="modal" data-target="#editModal" onclick="GetEditNode(event)">Edit</button></td>
+                            </tr>
+                        }
+
+                        <div class="">
+                            @if (Model.HasPreviousPage)
+                            {
+                                <button class="text-left mr-5 btn-sm" asp-action="Index" asp-route-pageNumber="@(Model.PageIndex - 1)">Previous</button>
+                            }
+                            @if (Model.HasNextPage)
+                            {
+                                <button class="text-right ml-5 btn-sm" asp-action="Index" asp-route-pageNumber="@(Model.PageIndex + 1)">Next</button>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <p class="text-center">No Schemes added yet. Add a Scheme</p>
+                    }
+                }
+            }
+        </tbody>
+    </table>
+
+
+    <div id="modal" class="modal">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-body m-3">
+                    <h3 class="text-center mb-3">Scheme</h3>
+                    <form method="post" asp-action="Create" asp-controller="Scheme">
+                        <div class="row">
+                            <input class="form-control m-2 col-md-5" name="Name" type="text" placeholder="Name" required />
+                            <textarea class="form-control m-2 col-md-10" name="Description" type="text" placeholder="Description" required></textarea>
+                            <div class="m-1">
+                                <select name="RouteID" class="form-control m-2" required>
+                                    <option value="">Select Route</option>
+                                    @foreach (var route in routes)
+                                    {
+                                        <option class="m-1" value="@route.Id">@route.Name</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="m-1">
+                                <select name="TransactionTypeID" class="form-control m-2" required>
+                                    <option value="">Select Transaction Type</option>
+                                    @foreach (var transactionType in transactionTypes)
+                                    {
+                                        <option class="m-1" value="@transactionType.Id">@transactionType.Name</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="m-1">
+                                <select name="ChannelID" class="form-control m-2" required>
+                                    <option value="">Select Channel</option>
+                                    @foreach (var channel in channels)
+                                    {
+                                        <option class="m-1" value="@channel.Id">@channel.Name</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="m-1">
+                                <select name="FeeID" class="form-control m-2" required>
+                                    <option value="">Select Fee</option>
+                                    @foreach (var fee in fees)
+                                    {
+                                        <option class="m-1" value="@fee.Id">@fee.Name</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <button class="mt-3 btn-sm" type="submit">Submit</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <div id="editModal" class="modal">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-body m-3">
+                    <h3 class="text-center mb-3">Scheme</h3>
+                    <form method="post" asp-action="Edit" asp-controller="Scheme">
+                        <div class="row">
+                            <input class="form-control m-2 col-md-5" id="editId" name="Id" type="text" placeholder="Id" required hidden />
+
+                            <input class="form-control m-2 col-md-5" name="Name" type="text" placeholder="Name" required />
+                            <textarea class="form-control m-2 col-md-10" name="Description" type="text" placeholder="Description" required></textarea>
+                            <div class="m-1">
+                                <select name="RouteID" class="form-control m-2" required>
+                                    <option value="">Select Route</option>
+                                    @foreach (var route in routes)
+                                    {
+                                        <option class="m-1" value="@route.Id">@route.Name</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="m-1">
+                                <select name="TransactionTypeID" class="form-control m-2" required>
+                                    <option value="">Select Transaction Type</option>
+                                    @foreach (var transactionType in transactionTypes)
+                                    {
+                                        <option class="m-1" value="@transactionType.Id">@transactionType.Name</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="m-1">
+                                <select name="ChannelID" class="form-control m-2" required>
+                                    <option value="">Select Channel</option>
+                                    @foreach (var channel in channels)
+                                    {
+                                        <option class="m-1" value="@channel.Id">@channel.Name</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="m-1">
+                                <select name="FeeID" class="form-control m-2" required>
+                                    <option value="">Select Fee</option>
+                                    @foreach (var fee in fees)
+                                    {
+                                        <option class="m-1" value="@fee.Id">@fee.Name</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <button class="mt-3 btn-sm" type="submit">Submit</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>function GetEditNode(event) {
+        var target = event.target || event.srcElement;
+
+        document.getElementById("editId").value = target.id;
+    }</script>

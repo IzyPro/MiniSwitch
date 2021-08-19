@@ -1,6 +1,9 @@
 ﻿@{
     ViewData["Title"] = "Dashboard";
     Layout = "~/Views/Shared/_MasterLayout.cshtml";
+    User user = Model;
+    decimal totalProcessedTransactions = ViewBag.TotalTransactionAmount;
+    var currency = System.Globalization.CultureInfo.CreateSpecificCulture("en-NG");
 }
 
 <link rel="stylesheet" href="~/css/user.css" />
@@ -9,17 +12,27 @@
     <h2 class="text-center heading mb-5">Dashboard</h2>
     <div class="row">
         <div class="col-md-8 shadow p-3 rounded">
-            <h4>Wallets</h4>
+            <h5 class="mb-3">Details</h5>
+            <div class="row">
+                <div class="col-md-4">
+                    <h6 class="coloredText">Name</h6>
+                    <h5>@user.Firstname @user.Lastname</h5>
+                </div>
 
+                <div class="col-md-4">
+                    <h6 class="coloredText">Email</h6>
+                    <h5>@user.Email</h5>
+                </div>
+            </div>
         </div>
         <div class="col-md-4">
             <div class="shadow p-3 mb-3 rounded">
-                <h4>Balance</h4>
-                <h1>$500</h1>
+                <h6>Total processed Transactions</h6>
+                <h3 class="coloredText">@totalProcessedTransactions.ToString("C", currency)</h3>
             </div>
             <div class="shadow p-3 rounded">
-                <h6>MiniSwitch Status</h6>
-                <h4>Active</h4>
+                <h6>MiniSwitch User Status</h6>
+                <h4 class="coloredText">@user.UserStatus</h4>
             </div>
         </div>
     </div>
