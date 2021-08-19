@@ -3,7 +3,6 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using AutoMapper;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -18,13 +17,13 @@ using MiniSwitch.ViewModels;
 
 namespace MiniSwitch.Controllers
 {
+    [Authorize]
     public class UserController : Controller
     {
         private IUserServices _userService;
         private IMapper _mapper;
         private ITransactionService _transactionService;
         private UserManager<User> _userManager;
-        private static User user;
 
         public UserController(IUserServices userService, IMapper mapper, ITransactionService transactionService, UserManager<User> userManager)
         {
@@ -35,12 +34,10 @@ namespace MiniSwitch.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Dashboard(User newuser)
+        public async Task<IActionResult> Dashboard()
         {
-            if(!string.IsNullOrEmpty(newuser.Firstname))
-            {
-                user = newuser;
-            }
+            var currentUserID = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var user = await _userManager.FindByIdAsync(currentUserID);
             var totaltransactionAmount = await _transactionService.FetchAll();
             ViewBag.TotalTransactionAmount = totaltransactionAmount.Sum(a => a.Amount);
             return View(user);

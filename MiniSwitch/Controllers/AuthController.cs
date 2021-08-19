@@ -8,6 +8,7 @@ using MiniSwitch.Models;
 using MiniSwitch.Services;
 using MiniSwitch.ViewModels;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -67,7 +68,9 @@ namespace MiniSwitch.Controllers
                     var loginResponse = _mapper.Map<LoginResponseDTO>(user);
                     loginResponse.UserRoles = await _userService.GetUserRolesAsync(user);
                     loginResponse.token = token;
-                    return RedirectToAction("Dashboard", "User", user);
+
+                    HttpContext.Session.SetString("JWToken", token);
+                    return RedirectToAction("Dashboard", "User");
                 }
             }
             else

@@ -190,7 +190,7 @@ namespace MiniSwitch.Services
 			var claims = new List<Claim>()
 			{
 				new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-				new Claim(ClaimTypes.Name, $"{user.Firstname} {" "} {user.Lastname}"),
+				new Claim(ClaimTypes.Name, $"{user.Firstname} {user.Lastname}"),
 				new Claim(ClaimTypes.Email, user.Email),
 				new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
 				new Claim(JwtRegisteredClaimNames.Email, user.Email),
@@ -211,7 +211,6 @@ namespace MiniSwitch.Services
 				expires: DateTime.Now.AddHours(1),
 				signingCredentials: credentials
 			);
-
 			return new JwtSecurityTokenHandler().WriteToken(token);
 		}
 
