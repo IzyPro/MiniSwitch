@@ -16,7 +16,7 @@ Take a scenario where you go to an ATM Terminal belonging to Bank A with your Ba
 #### Source Node
 This is basically the source of the transaction. This node contains properties such as IP Address, Hostname, Port and Scheme of every transaction.
 
-#### Source Node
+#### Sink Node
 This is the destination of the transaction. This node contains properties such as IP Address, Hostname and Port of every transaction.
 
 #### Scheme
