@@ -16,19 +16,19 @@ Take a scenario where you go to an ATM Terminal belonging to Bank A with your Ba
 ##### Source Node
 This is basically the source of the transaction. This node contains properties such as IP Address, Hostname, Port and Scheme of every transaction.
 
-#### Sink Node
+##### Sink Node
 This is the destination of the transaction. This node contains properties such as IP Address, Hostname and Port of every transaction.
 
-#### Scheme
+##### Scheme
 This is the structure of the transaction. Scheme contains properties such as the Transaction Type, Route, Channel and Fee of every transaction.
 
-#### Transaction Type
+##### Transaction Type
 This is the type of the transaction being performed. Transaction types can be Deposit, Withdrawal, Transfer e.t.c
 
-#### Route
+##### Route
 The Route class will include properties like the Card BIN and the sink node which is the destination of the transaction.
 
-#### Channel
+##### Channel
 The Channel is simply the mode of transaction. These can be either Mobile Banking, ATM, USSD and the likes and each channel can have fees attached to them.
 
 #### How it Works
